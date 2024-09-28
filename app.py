@@ -1,17 +1,17 @@
 from aiogram import executor
-
-from loader import dp
+from loader import dp, db, bot
 import middlewares, filters, handlers
-from utils.notify_admins import on_startup_notify
 from utils.set_bot_commands import set_default_commands
+from keep_alive import keep_alive
+from data.config import DEVELOPMENT_MODE
+
+if not DEVELOPMENT_MODE:
+    keep_alive()
 
 
 async def on_startup(dispatcher):
-    # Birlamchi komandalar (/star va /help)
+    await db.create()
     await set_default_commands(dispatcher)
-
-    # Bot ishga tushgani haqida adminga xabar berish
-    await on_startup_notify(dispatcher)
 
 
 if __name__ == '__main__':
