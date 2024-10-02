@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from .models import TeacherProfile, ParentProfile, User
+from .models import TeacherProfile, ParentProfile, Users
 
 
 class TeacherProfileForm(ModelForm):
@@ -9,7 +9,7 @@ class TeacherProfileForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['user'].queryset = User.objects.filter(role='teacher')
+        self.fields['user'].queryset = Users.objects.filter(role='teacher')
 
 
 class ParentProfileForm(ModelForm):
@@ -19,4 +19,4 @@ class ParentProfileForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['user'].queryset = User.objects.filter(role='parent')
+        self.fields['user'].queryset = Users.objects.filter(role='parent')

@@ -2,7 +2,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 
-class User(models.Model):
+class Users(models.Model):
     ROLE_CHOICES = (
         ('admin', 'Admin'),
         ('user', 'Oddiy foydalanuvchi'),
@@ -26,8 +26,17 @@ class User(models.Model):
 
 
 class TeacherProfile(models.Model):
+    user = models.OneToOneField(Users, on_delete=models.CASCADE, verbose_name='Foydalanuvchi', null=False, blank=False)
     first_name = models.CharField(max_length=100, null=False, blank=False, verbose_name='Ism')
     last_name = models.CharField(max_length=100, null=False, blank=False, verbose_name='Familiya')
+    birth_year = models.IntegerField(validators=[
+        MinValueValidator(1970),
+        MaxValueValidator(2010)
+    ], null=False, blank=False, verbose_name="Tug'ilgan yili")
+    experience = models.IntegerField(validators=[
+        MinValueValidator(1),
+        MaxValueValidator(30)
+    ], null=False, blank=False, verbose_name="Ish tajribasi")
 
     # other fields
 
@@ -47,7 +56,7 @@ class Group(models.Model):
     # other fields
 
     class Meta:
-        db_table = 'group'
+        db_table = 'groups'
         verbose_name = "Group"
         verbose_name_plural = "Guruhlar"
 
@@ -56,8 +65,9 @@ class Group(models.Model):
 
 
 class ParentProfile(models.Model):
-    child_first_name = models.CharField(max_length=100, null=False, blank=False, verbose_name='Ism')
-    child_last_name = models.CharField(max_length=100, null=False, blank=False, verbose_name='Familiya')
+    user = models.OneToOneField(Users, on_delete=models.CASCADE, verbose_name='Foydalanuvchi', null=True, blank=False)
+    child_first_name = models.CharField(max_length=100, null=False, blank=False, verbose_name='Farzand ismi')
+    child_last_name = models.CharField(max_length=100, null=False, blank=False, verbose_name='Farzand familiyasi')
     group = models.ForeignKey(Group, on_delete=models.CASCADE, verbose_name="Guruhi")
 
     # other fields
@@ -89,6 +99,39 @@ class DailyMark(models.Model):
         ],
         verbose_name='Kategory 2'
     )
+    kategory3 = models.IntegerField(
+        null=True,
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(5),
+        ],
+        verbose_name='Kategory 3'
+    )
+    kategory4 = models.IntegerField(
+        null=True,
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(5),
+        ],
+        verbose_name='Kategory 4'
+    )
+    kategory5 = models.IntegerField(
+        null=True,
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(5),
+        ],
+        verbose_name='Kategory 5'
+    )
+    kategory6 = models.IntegerField(
+        null=True,
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(5),
+        ],
+        verbose_name='Kategory 6'
+    )
+
     # other categories
     description = models.TextField(null=False, blank=False, verbose_name='Izoh')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Time")

@@ -46,7 +46,6 @@ class Database:
                     result = await connection.execute(command, *args)
             return result
 
-
     @staticmethod
     def format_args(sql, parameters: dict):
         sql += " AND ".join([
@@ -56,20 +55,143 @@ class Database:
         return sql, tuple(parameters.values())
 
     # for users
-    async def create_user(self, phone, username, full_name, telegram_id):
-        sql = "INSERT INTO Users (phone, username, full_name, telegram_id) VALUES($1, $2, $3, $4) returning *"
-        return await self.execute(sql, phone, username, full_name, telegram_id, fetchrow=True)
+    # async def create_user(self, phone, username, full_name, telegram_id):
+    #     sql = "INSERT INTO Users (phone, username, full_name, telegram_id) VALUES($1, $2, $3, $4) returning *"
+    #     return await self.execute(sql, phone, username, full_name, telegram_id, fetchrow=True)
+    #
+    # async def select_user(self, **kwargs):
+    #     sql = "SELECT * FROM Users WHERE "
+    #     sql, parameters = self.format_args(sql, parameters=kwargs)
+    #     return await self.execute(sql, *parameters, fetch=True)
+    #
+    # async def select_all_users(self):
+    #     sql = "SELECT * FROM Users"
+    #     return await self.execute(sql, fetch=True)
+    #
+    # async def select_users(self, **kwargs):
+    #     sql = "SELECT * FROM Users WHERE "
+    #     sql, parameters = self.format_args(sql, parameters=kwargs)
+    #     return await self.execute(sql, *parameters, fetch=True)
 
-    async def select_user(self, **kwargs):
-        sql = "SELECT * FROM Users WHERE "
-        sql, parameters = self.format_args(sql, parameters=kwargs)
-        return await self.execute(sql, *parameters, fetch=True)
+    async def create_user(self, phone, username, full_name, telegram_id, role='user'):
+        sql = "INSERT INTO users (phone, username, full_name, telegram_id, role) VALUES($1, $2, $3, $4, $5) RETURNING *"
+        return await self.execute(sql, phone, username, full_name, telegram_id, role, fetchrow=True)
+
+    async def select_user(self, user_id):
+        sql = "SELECT * FROM users WHERE id = $1"
+        return await self.execute(sql, user_id, fetchrow=True)
 
     async def select_all_users(self):
-        sql = "SELECT * FROM Users"
+        sql = "SELECT * FROM users"
         return await self.execute(sql, fetch=True)
 
     async def select_users(self, **kwargs):
-        sql = "SELECT * FROM Users WHERE "
+        sql = "SELECT * FROM users WHERE "
         sql, parameters = self.format_args(sql, parameters=kwargs)
         return await self.execute(sql, *parameters, fetch=True)
+
+    async def update_user(self, user_id, **kwargs):
+        set_clause = ", ".join([f"{key} = ${i + 1}" for i, key in enumerate(kwargs.keys())])
+        sql = f"UPDATE users SET {set_clause} WHERE id = ${len(kwargs) + 1} RETURNING *"
+        return await self.execute(sql, *kwargs.values(), user_id, fetchrow=True)
+
+    async def delete_user(self, user_id):
+        sql = "DELETE FROM users WHERE id = $1 RETURNING *"
+        return await self.execute(sql, user_id, fetchrow=True)
+
+    # for teacher profile
+    async def create_teacher_profile(self, user_id, first_name, last_name, birth_year, experience):
+        sql = "INSERT INTO teacher_profile (user_id, first_name, last_name, firth_year, experience) VALUES($1, $2, $3, $4, $5) RETURNING *"
+        return await self.execute(sql, user_id, first_name, last_name, birth_year, experience, fetchrow=True)
+
+    async def select_teacher_profile(self, profile_id):
+        sql = "SELECT * FROM teacher_profile WHERE id = $1"
+        return await self.execute(sql, profile_id, fetchrow=True)
+
+    async def select_teacher_profiles(self, **kwargs):
+        sql = "SELECT * FROM teacher_profile WHERE "
+        sql, parameters = self.format_args(sql, parameters=kwargs)
+        return await self.execute(sql, *parameters, fetch=True)
+
+    async def update_teacher_profile(self, profile_id, **kwargs):
+        set_clause = ", ".join([f"{key} = ${i + 1}" for i, key in enumerate(kwargs.keys())])
+        sql = f"UPDATE teacher_profile SET {set_clause} WHERE id = ${len(kwargs) + 1} RETURNING *"
+        return await self.execute(sql, *kwargs.values(), profile_id, fetchrow=True)
+
+    async def delete_teacher_profile(self, profile_id):
+        sql = "DELETE FROM teacher_profile WHERE id = $1 RETURNING *"
+        return await self.execute(sql, profile_id, fetchrow=True)
+
+    # for groups
+    async def create_group(self, name, teacher_id):
+        sql = "INSERT INTO groups (name, teacher_id) VALUES($1, $2) RETURNING *"
+        return await self.execute(sql, name, teacher_id, fetchrow=True)
+
+    async def select_group(self, group_id):
+        sql = "SELECT * FROM groups WHERE id = $1"
+        return await self.execute(sql, group_id, fetchrow=True)
+
+    async def select_all_groups(self):
+        sql = "SELECT * FROM groups"
+        return await self.execute(sql, fetch=True)
+
+    async def select_groups(self, **kwargs):
+        sql = "SELECT * FROM groups WHERE "
+        sql, parameters = self.format_args(sql, parameters=kwargs)
+        return await self.execute(sql, *parameters, fetch=True)
+
+    async def update_group(self, group_id, **kwargs):
+        set_clause = ", ".join([f"{key} = ${i + 1}" for i, key in enumerate(kwargs.keys())])
+        sql = f"UPDATE group SET {set_clause} WHERE id = ${len(kwargs) + 1} RETURNING *"
+        return await self.execute(sql, *kwargs.values(), group_id, fetchrow=True)
+
+    async def delete_group(self, group_id):
+        sql = "DELETE FROM group WHERE id = $1 RETURNING *"
+        return await self.execute(sql, group_id, fetchrow=True)
+
+    # for parent's profile
+    async def create_parent_profile(self, user_id, child_first_name, child_last_name, group_id):
+        sql = "INSERT INTO parent_profile (user_id, child_first_name, child_last_name, group_id) VALUES($1, $2, $3, $4) RETURNING *"
+        return await self.execute(sql, user_id, child_first_name, child_last_name, group_id, fetchrow=True)
+
+    async def select_parent_profile(self, profile_id):
+        sql = "SELECT * FROM parent_profile WHERE id = $1"
+        return await self.execute(sql, profile_id, fetchrow=True)
+
+    async def select_parent_profiles(self, **kwargs):
+        sql = "SELECT * FROM parent_profile WHERE "
+        sql, parameters = self.format_args(sql, parameters=kwargs)
+        return await self.execute(sql, *parameters, fetch=True)
+
+    async def update_parent_profile(self, profile_id, **kwargs):
+        set_clause = ", ".join([f"{key} = ${i + 1}" for i, key in enumerate(kwargs.keys())])
+        sql = f"UPDATE parent_profile SET {set_clause} WHERE id = ${len(kwargs) + 1} RETURNING *"
+        return await self.execute
+
+    async def delete_parent_profile(self, profile_id):
+        sql = "DELETE FROM parent_profile WHERE id = $1 RETURNING *"
+        return await self.execute(sql, profile_id, fetchrow=True)
+
+    # for daily marks
+    async def create_daily_mark(self, student_id, kategory1, kategory2, kategory3, kategory4, kategory5, kategory6,
+                                description):
+        sql = """
+        INSERT INTO daily_mark (student_id, kategory1, kategory2, kategory3, kategory4, kategory5, kategory6, description)
+        VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *
+        """
+        return await self.execute(sql, student_id, kategory1, kategory2, kategory3, kategory4, kategory5, kategory6,
+                                  description, fetchrow=True)
+
+    async def select_daily_mark(self, **kwargs):
+        sql = "SELECT * FROM daily_mark WHERE "
+        sql, parameters = self.format_args(sql, parameters=kwargs)
+        return await self.execute(sql, *parameters, fetch=True)
+
+    async def update_daily_mark(self, mark_id, **kwargs):
+        set_clause = ", ".join([f"{key} = ${i + 1}" for i, key in enumerate(kwargs.keys())])
+        sql = f"UPDATE daily_mark SET {set_clause} WHERE id = ${len(kwargs) + 1} RETURNING *"
+        return await self.execute(sql, *kwargs.values(), mark_id, fetchrow=True)
+
+    async def delete_daily_mark(self, mark_id):
+        sql = "DELETE FROM daily_mark WHERE id = $1 RETURNING *"
+        return await self.execute(sql, mark_id, fetchrow=True)

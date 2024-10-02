@@ -4,7 +4,7 @@ from .models import *
 from .forms import *
 
 
-@admin.register(User)
+@admin.register(Users)
 class UserAdmin(admin.ModelAdmin):
     list_display = ('id', 'full_name', 'username', 'role')
 
@@ -17,7 +17,7 @@ class GroupAdmin(admin.ModelAdmin):
 @admin.register(TeacherProfile)
 class TeacherProfileAdmin(admin.ModelAdmin):
     form = TeacherProfileForm
-    list_display = ('id', 'first_name', 'last_name')
+    list_display = ('id', 'first_name', 'last_name', 'birth_year', 'experience')
 
 
 @admin.register(ParentProfile)
