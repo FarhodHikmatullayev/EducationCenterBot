@@ -101,7 +101,7 @@ class Database:
 
     # for teacher profile
     async def create_teacher_profile(self, user_id, first_name, last_name, birth_year, experience):
-        sql = "INSERT INTO teacher_profile (user_id, first_name, last_name, firth_year, experience) VALUES($1, $2, $3, $4, $5) RETURNING *"
+        sql = "INSERT INTO teacher_profile (user_id, first_name, last_name, birth_year, experience) VALUES($1, $2, $3, $4, $5) RETURNING *"
         return await self.execute(sql, user_id, first_name, last_name, birth_year, experience, fetchrow=True)
 
     async def select_teacher_profile(self, profile_id):
@@ -112,6 +112,10 @@ class Database:
         sql = "SELECT * FROM teacher_profile WHERE "
         sql, parameters = self.format_args(sql, parameters=kwargs)
         return await self.execute(sql, *parameters, fetch=True)
+
+    async def select_all_teacher_profile(self):
+        sql = "SELECT * FROM teacher_profile"
+        return await self.execute(sql, fetch=True)
 
     async def update_teacher_profile(self, profile_id, **kwargs):
         set_clause = ", ".join([f"{key} = ${i + 1}" for i, key in enumerate(kwargs.keys())])
@@ -142,11 +146,11 @@ class Database:
 
     async def update_group(self, group_id, **kwargs):
         set_clause = ", ".join([f"{key} = ${i + 1}" for i, key in enumerate(kwargs.keys())])
-        sql = f"UPDATE group SET {set_clause} WHERE id = ${len(kwargs) + 1} RETURNING *"
+        sql = f"UPDATE groups SET {set_clause} WHERE id = ${len(kwargs) + 1} RETURNING *"
         return await self.execute(sql, *kwargs.values(), group_id, fetchrow=True)
 
     async def delete_group(self, group_id):
-        sql = "DELETE FROM group WHERE id = $1 RETURNING *"
+        sql = "DELETE FROM groups WHERE id = $1 RETURNING *"
         return await self.execute(sql, group_id, fetchrow=True)
 
     # for parent's profile
@@ -166,7 +170,7 @@ class Database:
     async def update_parent_profile(self, profile_id, **kwargs):
         set_clause = ", ".join([f"{key} = ${i + 1}" for i, key in enumerate(kwargs.keys())])
         sql = f"UPDATE parent_profile SET {set_clause} WHERE id = ${len(kwargs) + 1} RETURNING *"
-        return await self.execute
+        return await self.execute(sql, *kwargs.values(), profile_id, fetchrow=True)
 
     async def delete_parent_profile(self, profile_id):
         sql = "DELETE FROM parent_profile WHERE id = $1 RETURNING *"

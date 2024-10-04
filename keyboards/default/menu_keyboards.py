@@ -73,3 +73,12 @@ async def main_menu_default_keyboard(user_role):
         )
 
     return markup
+
+go_back_default_keyboard = ReplyKeyboardMarkup(
+    resize_keyboard=True,
+    keyboard=[
+        [
+            KeyboardButton(text="🔙 Orqaga")
+        ]
+    ]
+)

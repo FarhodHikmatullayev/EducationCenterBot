@@ -9,11 +9,11 @@ class Users(models.Model):
         ('teacher', 'O\'qituvchi'),
         ('parent', 'Ota-Ona'),
     )
-    full_name = models.CharField(max_length=100, null=False, blank=False, verbose_name='F.I.Sh')
-    username = models.CharField(max_length=100, null=False, blank=False, verbose_name='Username')
-    phone = models.CharField(max_length=100, null=False, blank=False, verbose_name='Telefon raqam')
-    telegram_id = models.BigIntegerField(null=False, blank=False, unique=True, verbose_name="Telegram ID")
-    role = models.CharField(max_length=100, choices=ROLE_CHOICES, default='user', null=True, blank=False,
+    full_name = models.CharField(max_length=100, null=True, blank=True, verbose_name='F.I.Sh')
+    username = models.CharField(max_length=100, null=True, blank=True, verbose_name='Username')
+    phone = models.CharField(max_length=100, null=True, blank=True, verbose_name='Telefon raqam')
+    telegram_id = models.BigIntegerField(null=True, blank=True, unique=True, verbose_name="Telegram ID")
+    role = models.CharField(max_length=100, choices=ROLE_CHOICES, default='user', null=True, blank=True,
                             verbose_name='Foydalanuvchi roli')
 
     class Meta:
@@ -26,17 +26,17 @@ class Users(models.Model):
 
 
 class TeacherProfile(models.Model):
-    user = models.OneToOneField(Users, on_delete=models.CASCADE, verbose_name='Foydalanuvchi', null=False, blank=False)
-    first_name = models.CharField(max_length=100, null=False, blank=False, verbose_name='Ism')
-    last_name = models.CharField(max_length=100, null=False, blank=False, verbose_name='Familiya')
-    birth_year = models.IntegerField(validators=[
+    user = models.OneToOneField(Users, on_delete=models.CASCADE, verbose_name='Foydalanuvchi', null=True, blank=True)
+    first_name = models.CharField(max_length=100, null=True, blank=True, verbose_name='Ism')
+    last_name = models.CharField(max_length=100, null=True, blank=True, verbose_name='Familiya')
+    birth_year = models.IntegerField(null=True, blank=True, validators=[
         MinValueValidator(1970),
         MaxValueValidator(2010)
-    ], null=False, blank=False, verbose_name="Tug'ilgan yili")
-    experience = models.IntegerField(validators=[
+    ], verbose_name="Tug'ilgan yili")
+    experience = models.IntegerField(null=True, blank=True, validators=[
         MinValueValidator(1),
         MaxValueValidator(30)
-    ], null=False, blank=False, verbose_name="Ish tajribasi")
+    ], verbose_name="Ish tajribasi")
 
     # other fields
 
@@ -50,8 +50,9 @@ class TeacherProfile(models.Model):
 
 
 class Group(models.Model):
-    name = models.CharField(max_length=100, null=False, blank=False, verbose_name='Nomi')
-    teacher = models.ForeignKey(TeacherProfile, on_delete=models.CASCADE, verbose_name="O'qituvchi")
+    name = models.CharField(max_length=100, null=True, blank=True, verbose_name='Nomi')
+    teacher = models.ForeignKey(TeacherProfile, null=True, blank=True, on_delete=models.SET_NULL,
+                                verbose_name="O'qituvchi")
 
     # other fields
 
@@ -65,10 +66,10 @@ class Group(models.Model):
 
 
 class ParentProfile(models.Model):
-    user = models.OneToOneField(Users, on_delete=models.CASCADE, verbose_name='Foydalanuvchi', null=True, blank=False)
-    child_first_name = models.CharField(max_length=100, null=False, blank=False, verbose_name='Farzand ismi')
-    child_last_name = models.CharField(max_length=100, null=False, blank=False, verbose_name='Farzand familiyasi')
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, verbose_name="Guruhi")
+    user = models.OneToOneField(Users, on_delete=models.CASCADE, verbose_name='Foydalanuvchi', null=True, blank=True)
+    child_first_name = models.CharField(max_length=100, null=True, blank=True, verbose_name='Farzand ismi')
+    child_last_name = models.CharField(max_length=100, null=True, blank=True, verbose_name='Farzand familiyasi')
+    group = models.ForeignKey(Group, on_delete=models.SET_NULL, verbose_name="Guruhi", null=True, blank=True)
 
     # other fields
 
@@ -133,7 +134,7 @@ class DailyMark(models.Model):
     )
 
     # other categories
-    description = models.TextField(null=False, blank=False, verbose_name='Izoh')
+    description = models.TextField(null=True, blank=True, verbose_name='Izoh')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Time")
 
     class Meta:

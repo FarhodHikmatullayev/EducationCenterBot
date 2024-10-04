@@ -9,8 +9,11 @@ from keyboards.default.menu_keyboards import back_to_menu
 from keyboards.default.profiles import change_profile_default_keyboard
 from keyboards.default.teacher_actions import teacher_actions_default_keyboard
 from loader import dp, db
+from states.groups import CreateGroupState, UpdateGroupState, RemoveStudentFromGroupState
+from states.teachers import CreateTeacherState, UpdateTeacherState
 
 
+@dp.message_handler(text="🔙 Orqaga", state=[CreateTeacherState.first_name, UpdateTeacherState.teacher_id])
 @dp.message_handler(text="👩‍🏫 O'qituvchilar", state="*")
 async def get_actions_for_teachers(message: types.Message, state: FSMContext):
     try:
@@ -33,6 +36,8 @@ async def get_actions_for_teachers(message: types.Message, state: FSMContext):
             await message.answer(text="Kerakli amalni tanlang 👇", reply_markup=teacher_actions_default_keyboard)
 
 
+@dp.message_handler(state=[CreateGroupState.name, UpdateGroupState.group_id, RemoveStudentFromGroupState.group_id],
+                    text="🔙 Orqaga")
 @dp.message_handler(text="👥 Guruhlar", state="*")
 async def get_actions_for_groups(message: types.Message, state: FSMContext):
     try:
