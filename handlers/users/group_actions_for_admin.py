@@ -1,9 +1,12 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
+from pyexpat.errors import messages
+
 from data.config import ADMINS
 from keyboards.default.all_groups import all_groups_default_keyboard
 from keyboards.default.all_students import all_students_in_group
 from keyboards.default.all_teachers import all_teachers_default_keyboard, all_teachers_and_next_default_keyboard
+from keyboards.default.all_users import all_users_default_keyboard
 from keyboards.default.change_profile_keyboards import next_change_default_keyboard
 from keyboards.default.confirm_actions_for_group import delete_group_default_keyboard
 from keyboards.default.go_to_registration import go_registration_default_keyboard
@@ -11,7 +14,8 @@ from keyboards.default.group_actions import group_actions_default_keyboard
 from keyboards.default.menu_keyboards import back_to_menu, go_back_default_keyboard
 from keyboards.inline.confirmation import confirm_keyboard
 from loader import dp, db, bot
-from states.groups import DeleteGroupState, CreateGroupState, UpdateGroupState, RemoveStudentFromGroupState
+from states.groups import DeleteGroupState, CreateGroupState, UpdateGroupState, RemoveStudentFromGroupState, \
+    AddStudentToGroupState
 
 
 # for delete
@@ -366,3 +370,136 @@ async def get_student_id(message: types.Message, state: FSMContext):
     await state.update_data(student_id=parent_profile_id)
     await message.answer(text=f"Haqiqatdan ham {stunt_full_name}ni guruhdan chiqarib tashlamoqchimisiz?\n",
                          reply_markup=confirm_keyboard)
+
+
+# for add student
+@dp.message_handler(state=AddStudentToGroupState.user_id, text="🔙 Orqaga")
+@dp.message_handler(text="➕ Guruhga o'quvchi qo'shish", state="*")
+async def start_adding_student_to_group(message: types.Message, state: FSMContext):
+    try:
+        await state.finish()
+    except:
+        pass
+    user_telegram_id = message.from_user.id
+    users = await db.select_users(telegram_id=user_telegram_id)
+    if not users:
+        await message.answer(text="🚫 Sizda botdan foydalanish uchun ruxsat mavjud emas,\n"
+                                  "📝 Botdan foydalanish uchun ro'yxatdan o'tishingiz kerak 👇",
+                             reply_markup=go_registration_default_keyboard)
+    else:
+        user = users[0]
+        user_role = user['role']
+        if user_role != 'admin':
+            await message.reply(text="⚠️ Bu buyruqdan foydalanish uchun sizda ruxsat mavjud emas!",
+                                reply_markup=back_to_menu)
+        else:
+            markup = await all_groups_default_keyboard()
+            await message.answer(text="❓ Qaysi guruhga o'quvchi qo'shmoqchisiz?\n"
+                                      "🔍 Guruhlardan birini tanlang 👇", reply_markup=markup)
+            await AddStudentToGroupState.group_id.set()
+
+
+@dp.message_handler(state=AddStudentToGroupState.group_id)
+async def get_group_id(message: types.Message, state: FSMContext):
+    group_name = message.text
+    groups = await db.select_groups(name=group_name)
+    if not groups:
+        await message.answer(text="⚠️ Bu guruh allaqachon o'chirib tashlangan", reply_markup=go_back_default_keyboard)
+        return
+    group_id = groups[0]['id']
+    await state.update_data(group_id=group_id)
+    markup = await all_users_default_keyboard()
+    await message.answer(text="O'quvchi qo'shish uchun foydalanuvchilardan birini tanlang 👇",
+                         reply_markup=markup)
+    await AddStudentToGroupState.user_id.set()
+
+
+@dp.callback_query_handler(text='yes', state=AddStudentToGroupState.user_id)
+async def add_to_group(call: types.CallbackQuery, state: FSMContext):
+    data = await state.get_data()
+    user_id = data.get('user_id')
+    group_id = data.get('group_id')
+
+    user = await db.update_user(
+        user_id=user_id,
+        role='parent',
+    )
+    parent_profile = await db.create_parent_profile(
+        user_id=user_id,
+        group_id=group_id,
+    )
+    await state.update_data(profile_id=parent_profile['id'])
+
+    await call.message.answer(text="✅ Foydalanuvchi guruhga qo'shildi\n"
+                                   "✍️ Endi o'quvching ismini kiriting:", reply_markup=back_to_menu)
+    await bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+    await AddStudentToGroupState.child_first_name.set()
+
+
+@dp.callback_query_handler(text='no', state=AddStudentToGroupState.user_id)
+async def cancel_adding_student(call: types.CallbackQuery, state: FSMContext):
+    await call.message.answer(text="❌ O'quvchi qo'shish bekor qilindi", reply_markup=back_to_menu)
+    await bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+    await state.finish()
+
+
+@dp.message_handler(state=AddStudentToGroupState.user_id)
+async def get_student_id(message: types.Message, state: FSMContext):
+    full_name = message.text
+    users = await db.select_users(full_name=full_name)
+    data = await state.get_data()
+    group_id = data.get('group_id')
+    group = await db.select_group(group_id=group_id)
+    if not users:
+        await message.answer(text="⚠️ Bu foydalanuvchi botdan chiqarib tashlangan.",
+                             reply_markup=go_back_default_keyboard)
+        return
+
+    user_id = users[0]['id']
+    await state.update_data(user_id=user_id)
+    await message.answer(text=f"Haqiqatdan ham {full_name}ni {group['name']}ga qo'shmoqchimisiz?\n",
+                         reply_markup=confirm_keyboard)
+
+
+@dp.callback_query_handler(text='yes', state=AddStudentToGroupState.child_last_name)
+async def save_child_full_name(call: types.CallbackQuery, state: FSMContext):
+    data = await state.get_data()
+    first_name = data.get("child_first_name")
+    last_name = data.get("child_last_name")
+    profile_id = data.get('profile_id')
+    parent_profile = await db.update_parent_profile(
+        profile_id=profile_id,
+        child_first_name=first_name,
+        child_last_name=last_name,
+    )
+    await call.message.answer(text="✅ O'quvchi ma'lumotlari saqlandi", reply_markup=back_to_menu)
+    await bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+    await state.finish()
+
+
+@dp.callback_query_handler(text='no', state=AddStudentToGroupState.child_last_name)
+async def cancel_saving_full_name(call: types.CallbackQuery, state: FSMContext):
+    await call.message.answer(text="❌ Saqlash bekor qilindi", reply_markup=back_to_menu)
+    await bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+    await state.finish()
+
+
+@dp.message_handler(state=AddStudentToGroupState.child_first_name)
+async def get_child_first_name(message: types.Message, state: FSMContext):
+    first_name = message.text
+    await state.update_data(child_first_name=first_name)
+    await message.answer("✍️ O'quvchining familiyasini kiriting: ", reply_markup=back_to_menu)
+    await AddStudentToGroupState.child_last_name.set()
+
+
+@dp.message_handler(state=AddStudentToGroupState.child_last_name)
+async def get_child_last_name(message: types.Message, state: FSMContext):
+    last_name = message.text
+    await state.update_data(child_last_name=last_name)
+    data = await state.get_data()
+    first_name = data.get('child_first_name')
+    text = (f"📚 O'quvchi ma'lumotlari 👇\n"
+            f"📝 Ismi: {first_name}\n"
+            f"📝 Familiyasi: {last_name}\n")
+    await message.answer(text=text)
+    await message.answer(text="O'quvchining ism-familiyasini saqlashni xohlaysizmi?", reply_markup=confirm_keyboard)

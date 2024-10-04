@@ -154,9 +154,9 @@ class Database:
         return await self.execute(sql, group_id, fetchrow=True)
 
     # for parent's profile
-    async def create_parent_profile(self, user_id, child_first_name, child_last_name, group_id):
-        sql = "INSERT INTO parent_profile (user_id, child_first_name, child_last_name, group_id) VALUES($1, $2, $3, $4) RETURNING *"
-        return await self.execute(sql, user_id, child_first_name, child_last_name, group_id, fetchrow=True)
+    async def create_parent_profile(self, user_id, group_id, child_first_name=None, child_last_name=None):
+        sql = "INSERT INTO parent_profile (user_id, group_id, child_first_name, child_last_name) VALUES($1, $2, $3, $4) RETURNING *"
+        return await self.execute(sql, user_id, group_id, child_first_name, child_last_name, fetchrow=True)
 
     async def select_parent_profile(self, profile_id):
         sql = "SELECT * FROM parent_profile WHERE id = $1"

@@ -9,7 +9,7 @@ from keyboards.default.menu_keyboards import back_to_menu
 from keyboards.default.profiles import change_profile_default_keyboard
 from keyboards.default.teacher_actions import teacher_actions_default_keyboard
 from loader import dp, db
-from states.groups import CreateGroupState, UpdateGroupState, RemoveStudentFromGroupState
+from states.groups import CreateGroupState, UpdateGroupState, RemoveStudentFromGroupState, AddStudentToGroupState
 from states.teachers import CreateTeacherState, UpdateTeacherState
 
 
@@ -36,7 +36,8 @@ async def get_actions_for_teachers(message: types.Message, state: FSMContext):
             await message.answer(text="Kerakli amalni tanlang 👇", reply_markup=teacher_actions_default_keyboard)
 
 
-@dp.message_handler(state=[CreateGroupState.name, UpdateGroupState.group_id, RemoveStudentFromGroupState.group_id],
+@dp.message_handler(state=[CreateGroupState.name, UpdateGroupState.group_id, RemoveStudentFromGroupState.group_id,
+                           AddStudentToGroupState.group_id],
                     text="🔙 Orqaga")
 @dp.message_handler(text="👥 Guruhlar", state="*")
 async def get_actions_for_groups(message: types.Message, state: FSMContext):
@@ -103,9 +104,10 @@ async def go_to_my_profile(message: types.Message, state: FSMContext):
                     f"🎂 Yoshingiz: {age} \n"
                     f"💼 Ish stajingiz: {experience} yil\n")
             if groups:
-                tr = 1
+                tr = 0
                 text += f"📚 Guruhlaringiz:\n"
                 for group in groups:
+                    tr += 1
                     text += f"\t{tr}. {group['name']}\n"
         elif user_role == "parent":
             parent = await db.select_parent_profiles(user_id=user_id)

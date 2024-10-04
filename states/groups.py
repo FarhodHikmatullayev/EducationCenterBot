@@ -20,3 +20,14 @@ class UpdateGroupState(StatesGroup):
 class RemoveStudentFromGroupState(StatesGroup):
     group_id = State()
     student_id = State()
+
+
+class AddStudentToGroupState(StatesGroup):
+    group_id = State()
+    user_id = State()
+    child_first_name = State()
+    child_last_name = State()
+
+
+class GetGroupState(StatesGroup):
+    group_id = State()
