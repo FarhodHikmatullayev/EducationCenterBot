@@ -31,3 +31,17 @@ class AddStudentToGroupState(StatesGroup):
 
 class GetGroupState(StatesGroup):
     group_id = State()
+
+
+class AddStudentToGroupStateForTeacher(StatesGroup):
+    group_id = State()
+    user_id = State()
+    parent_id = State()
+    child_first_name = State()
+    child_last_name = State()
+
+
+class DeleteStudentFromGroupStateForTeacher(StatesGroup):
+    group_id = State()
+    parent_id = State()
+    user_id = State()

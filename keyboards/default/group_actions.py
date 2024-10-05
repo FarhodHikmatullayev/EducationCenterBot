@@ -34,11 +34,10 @@ group_actions_for_teachers = ReplyKeyboardMarkup(
             KeyboardButton(text="📊 Guruh o'quvchilari reytingi"),
         ],
         [
-            KeyboardButton(text="➕ Guruhga o'quvchi qo'shish"),
+            KeyboardButton(text="➕ O'quvchi qo'shish"),
+            KeyboardButton(text="➖ O'quvchini o'chirish"),
         ],
-        [
-            KeyboardButton(text="➖ Guruhdan o'quvchini o'chirish"),
-        ],
+
         [
             KeyboardButton(text="🔙 Orqaga"),
         ],
