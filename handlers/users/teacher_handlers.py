@@ -11,6 +11,7 @@ from keyboards.inline.confirmation import confirm_keyboard
 from loader import dp, db, bot
 from states.groups import GetGroupState, AddStudentToGroupStateForTeacher, \
     DeleteStudentFromGroupStateForTeacher
+from states.mark_states import CreateMarkState
 
 
 @dp.message_handler(text="🔙 Orqaga", state=[GetGroupState.group_id])
@@ -91,9 +92,6 @@ async def start_deleting_student_from_group(message: types.Message, state: FSMCo
             await message.answer(text="O'chirilishi kerak bo'lgan o'quvchini tanlang 👇", reply_markup=markup)
             await DeleteStudentFromGroupStateForTeacher.parent_id.set()
             await state.update_data(group_id=group_id)
-
-
-
 
 
 @dp.callback_query_handler(state=AddStudentToGroupStateForTeacher.user_id, text='yes')
@@ -180,7 +178,7 @@ async def get_child_last_name(message: types.Message, state: FSMContext):
 # this is except from other codes: for getting group id
 @dp.message_handler(state=[
     AddStudentToGroupStateForTeacher.user_id,
-    DeleteStudentFromGroupStateForTeacher.parent_id
+    DeleteStudentFromGroupStateForTeacher.parent_id,
 ],
     text="🔙 Orqaga")
 @dp.message_handler(state=[GetGroupState.group_id])

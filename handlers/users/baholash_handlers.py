@@ -6,6 +6,7 @@ from aiogram.types import CallbackQuery
 
 from keyboards.default.all_students import all_students_in_group
 from keyboards.default.go_to_registration import go_registration_default_keyboard
+from keyboards.default.group_actions import group_actions_for_teachers
 from keyboards.default.menu_keyboards import back_to_menu, go_back_default_keyboard
 from keyboards.inline.confirmation import confirm_keyboard
 from keyboards.inline.mark_keyboards import marks_keyboard
@@ -36,6 +37,12 @@ async def mark_function(message: types.Message, state: FSMContext):
             await CreateMarkState.student_id.set()
 
 
+@dp.message_handler(state=[CreateMarkState.student_id], text="🔙 Orqaga")
+async def get_group_id(message: types.Message, state: FSMContext):
+    await GetGroupState.group_id.set()
+    await message.answer(text="Amallardan birini tanlang 👇", reply_markup=group_actions_for_teachers)
+
+
 @dp.message_handler(state=CreateMarkState.student_id)
 async def get_student_id(message: types.Message, state: FSMContext):
     student_full_name = message.text
@@ -50,6 +57,7 @@ async def get_student_id(message: types.Message, state: FSMContext):
     parent_profile = parent_profiles[0]
     student_id = parent_profile['id']
     await state.update_data(student_id=student_id)
+    await message.answer(text="Bosh menyuga qaytish uchun 'Bosh Menyu' tugmasini bosing 👇", reply_markup=back_to_menu)
     await message.answer(text="O'quvchining darsdagi kayfiyatiga baho bering:", reply_markup=marks_keyboard)
     await CreateMarkState.kayfiyat.set()
 
@@ -59,9 +67,8 @@ async def get_kayfiyat_mark(call: types.CallbackQuery, state: FSMContext):
     mark = call.data
     mark = int(mark)
     await state.update_data(kayfiyat=mark)
-    await call.message.answer(text="O'quvchining tartibiga baho bering:", reply_markup=marks_keyboard)
+    await call.message.edit_text(text="O'quvchining tartibiga baho bering:", reply_markup=marks_keyboard)
     await CreateMarkState.tartib.set()
-    await bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
 
 
 @dp.callback_query_handler(state=CreateMarkState.tartib)
@@ -69,9 +76,8 @@ async def get_tartib_mark(call: types.CallbackQuery, state: FSMContext):
     mark = call.data
     mark = int(mark)
     await state.update_data(tartib=mark)
-    await call.message.answer(text="O'quvchining darsdagi faolligiga baho bering:", reply_markup=marks_keyboard)
+    await call.message.edit_text(text="O'quvchining darsdagi faolligiga baho bering:", reply_markup=marks_keyboard)
     await CreateMarkState.faollik.set()
-    await bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
 
 
 @dp.callback_query_handler(state=CreateMarkState.faollik)
@@ -79,9 +85,8 @@ async def get_faollik_mark(call: types.CallbackQuery, state: FSMContext):
     mark = call.data
     mark = int(mark)
     await state.update_data(faollik=mark)
-    await call.message.answer(text="O'quvchining darsga vaqtida kelishiga baho bering:", reply_markup=marks_keyboard)
+    await call.message.edit_text(text="O'quvchining darsga vaqtida kelishiga baho bering:", reply_markup=marks_keyboard)
     await CreateMarkState.vaqtida_kelish.set()
-    await bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
 
 
 @dp.callback_query_handler(state=CreateMarkState.vaqtida_kelish)
@@ -89,9 +94,8 @@ async def get_vaqtida_kelish_mark(call: types.CallbackQuery, state: FSMContext):
     mark = call.data
     mark = int(mark)
     await state.update_data(vaqtida_kelish=mark)
-    await call.message.answer(text="O'quvchining dars qoldirmasligiga baho bering:", reply_markup=marks_keyboard)
+    await call.message.edit_text(text="O'quvchining dars qoldirmasligiga baho bering:", reply_markup=marks_keyboard)
     await CreateMarkState.dars_qoldirmaslik.set()
-    await bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
 
 
 @dp.callback_query_handler(state=CreateMarkState.dars_qoldirmaslik)
@@ -99,9 +103,8 @@ async def get_dars_qoldirmaslik_mark(call: types.CallbackQuery, state: FSMContex
     mark = call.data
     mark = int(mark)
     await state.update_data(dars_qoldirmaslik=mark)
-    await call.message.answer(text="O'quvchining vazifalarni bajarishiga baho bering:", reply_markup=marks_keyboard)
+    await call.message.edit_text(text="O'quvchining vazifalarni bajarishiga baho bering:", reply_markup=marks_keyboard)
     await CreateMarkState.vazifa_bajarilganligi.set()
-    await bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
 
 
 @dp.callback_query_handler(state=CreateMarkState.vazifa_bajarilganligi)
@@ -109,9 +112,8 @@ async def get_vazifa_bajarganlik_mark(call: types.CallbackQuery, state: FSMConte
     mark = call.data
     mark = int(mark)
     await state.update_data(vazifa_bajarilganligi=mark)
-    await call.message.answer(text="O'quvchining darsni o'zlashtirishiga baho bering:", reply_markup=marks_keyboard)
+    await call.message.edit_text(text="O'quvchining darsni o'zlashtirishiga baho bering:", reply_markup=marks_keyboard)
     await CreateMarkState.darsni_ozlashtirish.set()
-    await bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
 
 
 @dp.callback_query_handler(state=CreateMarkState.darsni_ozlashtirish, text="yes")
@@ -146,10 +148,9 @@ async def cancel_getting_description(call: types.CallbackQuery, state: FSMContex
             f"🚫 Dars qoldirmasligi: {dars_qoldirmaslik}\n"
             f"✅ Vazifalarni bajarganligi: {vazifa_bajarilganligi}\n"
             f"📖 Darsni o'zlashtirishi: {darsni_ozlashtirish}\n")
-    await call.message.answer(text=text)
+    await call.message.edit_text(text=text)
     await call.message.answer(text="Bu bahoni saqlashni xohlaysizmi?", reply_markup=confirm_keyboard)
     await CreateMarkState.description.set()
-    await bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
 
 
 @dp.callback_query_handler(state=CreateMarkState.darsni_ozlashtirish)
@@ -157,8 +158,7 @@ async def get_darsni_ozlashtirishi_mark(call: types.CallbackQuery, state: FSMCon
     mark = call.data
     mark = int(mark)
     await state.update_data(darsni_ozlashtirish=mark)
-    await call.message.answer(text="Nega bunday baholaganingizga izoh yozasizmi?", reply_markup=confirm_keyboard)
-    await bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+    await call.message.edit_text(text="Nega bunday baholaganingizga izoh yozasizmi?", reply_markup=confirm_keyboard)
 
 
 @dp.callback_query_handler(state=CreateMarkState.description, text="yes")
