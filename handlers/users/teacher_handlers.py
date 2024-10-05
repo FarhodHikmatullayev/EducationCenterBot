@@ -93,6 +93,9 @@ async def start_deleting_student_from_group(message: types.Message, state: FSMCo
             await state.update_data(group_id=group_id)
 
 
+
+
+
 @dp.callback_query_handler(state=AddStudentToGroupStateForTeacher.user_id, text='yes')
 async def confirm_adding_student(call: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()

@@ -84,53 +84,61 @@ class ParentProfile(models.Model):
 
 class DailyMark(models.Model):
     student = models.ForeignKey(ParentProfile, on_delete=models.CASCADE, verbose_name="O'quvchi")
-    kategory1 = models.IntegerField(
+    kayfiyat = models.IntegerField(
         null=True,
         validators=[
             MinValueValidator(1),
             MaxValueValidator(5),
         ],
-        verbose_name='Kategory 1'
+        verbose_name='Kayfiyati'
     )
-    kategory2 = models.IntegerField(
+    tartib = models.IntegerField(
         null=True,
         validators=[
             MinValueValidator(1),
             MaxValueValidator(5),
         ],
-        verbose_name='Kategory 2'
+        verbose_name='Tartibi'
     )
-    kategory3 = models.IntegerField(
+    faollik = models.IntegerField(
         null=True,
         validators=[
             MinValueValidator(1),
             MaxValueValidator(5),
         ],
-        verbose_name='Kategory 3'
+        verbose_name='Dars davomida faolligi'
     )
-    kategory4 = models.IntegerField(
+    vaqtida_kelish = models.IntegerField(
         null=True,
         validators=[
             MinValueValidator(1),
             MaxValueValidator(5),
         ],
-        verbose_name='Kategory 4'
+        verbose_name="Darsga o'z vaqtida kelishi"
     )
-    kategory5 = models.IntegerField(
+    dars_qoldirmaslik = models.IntegerField(
         null=True,
         validators=[
             MinValueValidator(1),
             MaxValueValidator(5),
         ],
-        verbose_name='Kategory 5'
+        verbose_name='Dars qoldirmasligi'
     )
-    kategory6 = models.IntegerField(
+    vazifa_bajarilganligi = models.IntegerField(
         null=True,
         validators=[
             MinValueValidator(1),
             MaxValueValidator(5),
         ],
-        verbose_name='Kategory 6'
+        verbose_name='Uyga vazifasining bajarilganligi'
+    )
+    darsni_ozlashtirish = models.IntegerField(
+        null=True,
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(5),
+        ],
+        verbose_name="Darsni o'zlashtirishi"
     )
 
     # other categories

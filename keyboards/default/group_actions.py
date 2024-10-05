@@ -28,7 +28,7 @@ group_actions_for_teachers = ReplyKeyboardMarkup(
     resize_keyboard=True,
     keyboard=[
         [
-            KeyboardButton(text="⭐ Guruhdagi o'quvchilarni baholash"),
+            KeyboardButton(text="✨ Guruhdagi o'quvchilarni baholash"),
         ],
         [
             KeyboardButton(text="📊 Guruh o'quvchilari reytingi"),

@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Union
 
 import asyncpg
@@ -177,16 +178,49 @@ class Database:
         return await self.execute(sql, profile_id, fetchrow=True)
 
     # for daily marks
-    async def create_daily_mark(self, student_id, kategory1, kategory2, kategory3, kategory4, kategory5, kategory6,
-                                description):
+    # async def create_daily_mark(self, student_id, kategory1, kategory2, kategory3, kategory4, kategory5, kategory6,
+    #                             description):
+    #     sql = """
+    #     INSERT INTO daily_mark (student_id, kategory1, kategory2, kategory3, kategory4, kategory5, kategory6, description)
+    #     VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *
+    #     """
+    #     return await self.execute(sql, student_id, kategory1, kategory2, kategory3, kategory4, kategory5, kategory6,
+    #                               description, fetchrow=True)
+    #
+    # async def select_daily_mark(self, **kwargs):
+    #     sql = "SELECT * FROM daily_mark WHERE "
+    #     sql, parameters = self.format_args(sql, parameters=kwargs)
+    #     return await self.execute(sql, *parameters, fetch=True)
+    #
+    # async def update_daily_mark(self, mark_id, **kwargs):
+    #     set_clause = ", ".join([f"{key} = ${i + 1}" for i, key in enumerate(kwargs.keys())])
+    #     sql = f"UPDATE daily_mark SET {set_clause} WHERE id = ${len(kwargs) + 1} RETURNING *"
+    #     return await self.execute(sql, *kwargs.values(), mark_id, fetchrow=True)
+    #
+    # async def delete_daily_mark(self, mark_id):
+    #     sql = "DELETE FROM daily_mark WHERE id = $1 RETURNING *"
+    #     return await self.execute(sql, mark_id, fetchrow=True)
+
+    # for marks
+
+    async def create_daily_mark(self, student_id, kayfiyat, tartib, faollik, vaqtida_kelish,
+                                dars_qoldirmaslik, vazifa_bajarilganligi, darsni_ozlashtirish,
+                                created_at=datetime.now(),
+                                description=None):
         sql = """
-        INSERT INTO daily_mark (student_id, kategory1, kategory2, kategory3, kategory4, kategory5, kategory6, description)
-        VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *
+        INSERT INTO daily_mark (student_id, kayfiyat, tartib, faollik, vaqtida_kelish, 
+                                dars_qoldirmaslik, vazifa_bajarilganligi, darsni_ozlashtirish, created_at, description)
+        VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *
         """
-        return await self.execute(sql, student_id, kategory1, kategory2, kategory3, kategory4, kategory5, kategory6,
+        return await self.execute(sql, student_id, kayfiyat, tartib, faollik, vaqtida_kelish,
+                                  dars_qoldirmaslik, vazifa_bajarilganligi, darsni_ozlashtirish, created_at,
                                   description, fetchrow=True)
 
-    async def select_daily_mark(self, **kwargs):
+    async def select_daily_mark(self, mark_id):
+        sql = "SELECT * FROM daily_mark WHERE id = $1"
+        return await self.execute(sql, mark_id, fetchrow=True)
+
+    async def select_daily_marks(self, **kwargs):
         sql = "SELECT * FROM daily_mark WHERE "
         sql, parameters = self.format_args(sql, parameters=kwargs)
         return await self.execute(sql, *parameters, fetch=True)
