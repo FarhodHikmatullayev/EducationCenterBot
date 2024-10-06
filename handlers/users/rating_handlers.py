@@ -3,7 +3,6 @@ from aiogram.dispatcher import FSMContext
 
 from keyboards.default.all_groups import all_groups_default_keyboard
 from keyboards.default.go_to_registration import go_registration_default_keyboard
-from keyboards.default.group_actions import group_actions_for_teachers
 from keyboards.default.menu_keyboards import back_to_menu, go_back_default_keyboard
 from loader import dp, db, bot
 from states.groups import GetGroupState, GetGroupStateForAdmin

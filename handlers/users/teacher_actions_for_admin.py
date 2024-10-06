@@ -1,15 +1,13 @@
 from datetime import datetime
-from email import message_from_binary_file
 
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 
 from data.config import ADMINS
-from keyboards.default.all_teachers import all_teachers_default_keyboard, all_teachers_and_next_default_keyboard
+from keyboards.default.all_teachers import all_teachers_default_keyboard
 from keyboards.default.all_users import all_users_default_keyboard
 from keyboards.default.change_profile_keyboards import next_change_default_keyboard
 from keyboards.default.confirm_action_for_teacher import delete_teacher_default_keyboard
-from keyboards.default.confirm_actions_for_group import delete_group_default_keyboard
 from keyboards.default.go_to_registration import go_registration_default_keyboard
 from keyboards.default.menu_keyboards import back_to_menu, go_back_default_keyboard
 from keyboards.default.teacher_actions import teacher_actions_default_keyboard

@@ -11,7 +11,6 @@ from keyboards.inline.confirmation import confirm_keyboard
 from loader import dp, db, bot
 from states.groups import GetGroupState, AddStudentToGroupStateForTeacher, \
     DeleteStudentFromGroupStateForTeacher
-from states.mark_states import CreateMarkState
 
 
 @dp.message_handler(text="🔙 Orqaga", state=[GetGroupState.group_id])

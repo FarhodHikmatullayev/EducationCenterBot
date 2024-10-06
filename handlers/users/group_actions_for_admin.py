@@ -1,6 +1,5 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
-from pyexpat.errors import messages
 
 from data.config import ADMINS
 from keyboards.default.all_groups import all_groups_default_keyboard

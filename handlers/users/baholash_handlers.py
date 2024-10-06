@@ -1,6 +1,5 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
-from aiogram.types import CallbackQuery
 
 from keyboards.default.all_students import all_students_in_group
 from keyboards.default.go_to_registration import go_registration_default_keyboard
