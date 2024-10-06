@@ -17,6 +17,7 @@ class Users(models.Model):
     telegram_id = models.BigIntegerField(null=True, blank=True, unique=True, verbose_name="Telegram ID")
     role = models.CharField(max_length=100, choices=ROLE_CHOICES, default='user', null=True, blank=True,
                             verbose_name='Foydalanuvchi roli')
+    joined_at = models.DateTimeField(null=True, blank=True, default=datetime.now(), verbose_name="Qo'shilgan vaqti")
 
     class Meta:
         verbose_name = 'User'

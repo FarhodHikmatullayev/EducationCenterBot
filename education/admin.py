@@ -6,7 +6,7 @@ from .forms import *
 
 @admin.register(Users)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'full_name', 'username', 'role')
+    list_display = ('id', 'full_name', 'username', 'role', 'joined_at')
 
 
 @admin.register(Group)
