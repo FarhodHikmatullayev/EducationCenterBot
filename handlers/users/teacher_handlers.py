@@ -36,6 +36,10 @@ async def my_groups(message: types.Message, state: FSMContext):
         else:
             teacher_profiles = await db.select_teacher_profiles(user_id=user['id'])
             teacher_id = teacher_profiles[0]['id']
+            groups = await db.select_groups(teacher_id=teacher_id)
+            if not groups:
+                await message.answer(text="🚫 Sizda hali guruh mavjud emas", reply_markup=back_to_menu)
+                return
             markup = await my_groups_default_keyboard(teacher_id=teacher_id)
             await message.answer(text="Guruhlardan birini tanlang 👇", reply_markup=markup)
             await GetGroupState.group_id.set()

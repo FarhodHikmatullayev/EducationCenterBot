@@ -9,7 +9,8 @@ from keyboards.default.menu_keyboards import back_to_menu
 from keyboards.default.profiles import change_profile_default_keyboard
 from keyboards.default.teacher_actions import teacher_actions_default_keyboard
 from loader import dp, db
-from states.groups import CreateGroupState, UpdateGroupState, RemoveStudentFromGroupState, AddStudentToGroupState
+from states.groups import CreateGroupState, UpdateGroupState, RemoveStudentFromGroupState, AddStudentToGroupState, \
+    GetGroupStateForAdmin
 from states.teachers import CreateTeacherState, UpdateTeacherState
 
 
@@ -37,7 +38,7 @@ async def get_actions_for_teachers(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(state=[CreateGroupState.name, UpdateGroupState.group_id, RemoveStudentFromGroupState.group_id,
-                           AddStudentToGroupState.group_id],
+                           AddStudentToGroupState.group_id, GetGroupStateForAdmin.group_id],
                     text="🔙 Orqaga")
 @dp.message_handler(text="👥 Guruhlar", state="*")
 async def get_actions_for_groups(message: types.Message, state: FSMContext):
@@ -109,6 +110,8 @@ async def go_to_my_profile(message: types.Message, state: FSMContext):
                 for group in groups:
                     tr += 1
                     text += f"\t{tr}. {group['name']}\n"
+            else:
+                text += f"📚 Guruhlaringiz: Hali mavjud emas"
         elif user_role == "parent":
             parent = await db.select_parent_profiles(user_id=user_id)
             parent = parent[0]

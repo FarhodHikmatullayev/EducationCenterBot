@@ -23,7 +23,7 @@ class TeacherProfileAdmin(admin.ModelAdmin):
 @admin.register(ParentProfile)
 class ParentProfileAdmin(admin.ModelAdmin):
     form = ParentProfileForm
-    list_display = ('id', 'child_first_name', 'child_last_name', 'group')
+    list_display = ('id', 'child_first_name', 'child_last_name', 'user', 'group')
 
 
 @admin.register(DailyMark)

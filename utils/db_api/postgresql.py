@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Union
 
 import asyncpg
@@ -233,3 +233,32 @@ class Database:
     async def delete_daily_mark(self, mark_id):
         sql = "DELETE FROM daily_mark WHERE id = $1 RETURNING *"
         return await self.execute(sql, mark_id, fetchrow=True)
+
+    import datetime
+
+    from datetime import datetime, timedelta
+
+    async def select_last_month_marks(self, student_id):
+        # Hozirgi sanani olish
+        today = datetime.now()
+
+        # Oxirgi 30 kunning birinchi sanasini hisoblash
+        thirty_days_ago = today - timedelta(days=30)
+
+        sql = """
+        SELECT * FROM daily_mark 
+        WHERE student_id = $1 
+          AND created_at >= $2
+        """
+        return await self.execute(sql, student_id, thirty_days_ago, fetch=True)
+
+    async def select_today_marks(self, student_id):
+        # Bugungi sanani olish
+        today = datetime.now().date()  # Faqat sanani olish uchun date() metodidan foydalaning
+
+        sql = """
+        SELECT * FROM daily_mark 
+        WHERE student_id = $1 
+          AND created_at::date = $2
+        """
+        return await self.execute(sql, student_id, today, fetch=True)

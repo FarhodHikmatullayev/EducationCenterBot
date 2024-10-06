@@ -8,15 +8,17 @@ group_actions_default_keyboard = ReplyKeyboardMarkup(
         [
             KeyboardButton(text="➕ Yangi guruh yaratish")
         ],
+
         [
-            KeyboardButton(text="🗑️ Guruhni o'chirish")
-        ],
-        [
+            KeyboardButton(text="🗑️ Guruhni o'chirish"),
             KeyboardButton(text="✏️ Guruhni o'zgartirish")
         ],
         [
             KeyboardButton(text="➕ Guruhga o'quvchi qo'shish"),
             KeyboardButton(text="➖ Guruhdan o'quvchini o'chirish")
+        ],
+        [
+            KeyboardButton(text="📊 Guruh o'quvchilari reytingini ko'rish")
         ],
         [
             KeyboardButton(text="🔙 Bosh Menyu")

@@ -7,6 +7,7 @@ from . import group_actions_for_admin
 from . import teacher_actions_for_admin
 from . import student_actions
 from . import baholash_handlers
+from . import rating_handlers
 from . import teacher_handlers
 from . import parent_handlers
 

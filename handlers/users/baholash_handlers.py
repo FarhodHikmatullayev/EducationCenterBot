@@ -56,6 +56,12 @@ async def get_student_id(message: types.Message, state: FSMContext):
         return
     parent_profile = parent_profiles[0]
     student_id = parent_profile['id']
+    student_marks = await db.select_today_marks(student_id=student_id)
+    if student_marks:
+        await message.answer(
+            text="⚠️ Bu o'quvchiga allaqachon baho qo'ydingiz, bir dars uchun bir marta baho qo'yish mumkin",
+            reply_markup=go_back_default_keyboard)
+        return
     await state.update_data(student_id=student_id)
     await message.answer(text="Bosh menyuga qaytish uchun 'Bosh Menyu' tugmasini bosing 👇", reply_markup=back_to_menu)
     await message.answer(text="O'quvchining darsdagi kayfiyatiga baho bering:", reply_markup=marks_keyboard)

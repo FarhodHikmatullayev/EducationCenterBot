@@ -45,3 +45,8 @@ class DeleteStudentFromGroupStateForTeacher(StatesGroup):
     group_id = State()
     parent_id = State()
     user_id = State()
+
+
+class GetGroupStateForAdmin(StatesGroup):
+    group_id = State()
+    teacher_id = State()
