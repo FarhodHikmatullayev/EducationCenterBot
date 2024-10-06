@@ -1,5 +1,3 @@
-from idlelib.window import add_windows_to_menu
-
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.types import CallbackQuery
