@@ -6,15 +6,12 @@ from keyboards.default.go_to_registration import go_registration_default_keyboar
 from keyboards.default.menu_keyboards import back_to_menu
 from keyboards.inline.confirmation import confirm_keyboard
 from loader import dp, db, bot
-from states.profile_states import UpdateAdminProfileState, UpdateTeacherProfileState, UpdateParentProfileState
+from states.profile_states import UpdateAdminProfileState, UpdateTeacherProfileState, UpdateParentProfileState, \
+    GetProfileStateForProfile
 
 
-@dp.message_handler(text="✏️ Profilni o'zgartirish", state="*")
+@dp.message_handler(text="✏️ Profilni o'zgartirish", state=GetProfileStateForProfile.profile_id)
 async def change_profile_function(message: types.Message, state: FSMContext):
-    try:
-        await state.finish()
-    except:
-        pass
     user_telegram_id = message.from_user.id
     users = await db.select_users(telegram_id=user_telegram_id)
     if not users:
@@ -67,10 +64,14 @@ async def change_profile_function(message: types.Message, state: FSMContext):
             await UpdateTeacherProfileState.first_name.set()
 
         elif user_role == 'parent':
+            data = await state.get_data()
+            print('data', data)
+            profile_id = data.get('profile_id')
             user_id = user['id']
             phone_number = user['phone']
-            parent_profiles = await db.select_parent_profiles(user_id=user_id)
-            parent_profile = parent_profiles[0]
+            # parent_profiles = await db.select_parent_profiles(user_id=user_id)
+            # parent_profile = parent_profiles[0]
+            parent_profile = await db.select_parent_profile(profile_id=profile_id)
             child_first_name = parent_profile['child_first_name']
             child_last_name = parent_profile['child_last_name']
             parent_profile_id = parent_profile['id']

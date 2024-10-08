@@ -3,7 +3,7 @@ from aiogram.dispatcher import FSMContext
 
 from keyboards.default.all_groups import my_groups_default_keyboard
 from keyboards.default.all_students import all_students_in_group
-from keyboards.default.all_users import all_users_default_keyboard
+from keyboards.default.all_users import all_users_default_keyboard, all_users_and_parents_default_keyboard
 from keyboards.default.go_to_registration import go_registration_default_keyboard
 from keyboards.default.group_actions import group_actions_for_teachers
 from keyboards.default.menu_keyboards import back_to_menu, go_back_default_keyboard
@@ -64,7 +64,7 @@ async def start_adding_student_to_group(message: types.Message, state: FSMContex
             group_id = data.get('group_id')
             await state.finish()
 
-            markup = await all_users_default_keyboard()
+            markup = await all_users_and_parents_default_keyboard()
             await message.answer(text="👥 Guruhga o'quvchi qo'shish uchun foydalanuvchilardan birini tanlang 👇",
                                  reply_markup=markup)
 
@@ -232,15 +232,20 @@ async def delete_student_from_group_final(call: types.CallbackQuery, state: FSMC
 
     parent_profile = await db.select_parent_profile(profile_id=parent_id)
     user_id = parent_profile['user_id']
+    daily_marks = await db.select_daily_marks(student_id=parent_id)
+
+    for daily_mark in daily_marks:
+        await db.delete_daily_mark(mark_id=daily_mark['id'])
 
     await db.delete_parent_profile(
         profile_id=parent_id,
     )
-
-    user = await db.update_user(
-        user_id=user_id,
-        role='user'
-    )
+    profiles = await db.select_parent_profiles(user_id=user_id)
+    if not profiles:
+        user = await db.update_user(
+            user_id=user_id,
+            role='user'
+        )
     await call.message.answer(text="✅ Foydalanuvchi guruhdan chiqarib tashlandi", reply_markup=back_to_menu)
     await bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
     await state.finish()

@@ -5,7 +5,7 @@ from data.config import ADMINS
 from keyboards.default.all_groups import all_groups_default_keyboard
 from keyboards.default.all_students import all_students_in_group
 from keyboards.default.all_teachers import all_teachers_default_keyboard, all_teachers_and_next_default_keyboard
-from keyboards.default.all_users import all_users_default_keyboard
+from keyboards.default.all_users import all_users_default_keyboard, all_users_and_parents_default_keyboard
 from keyboards.default.change_profile_keyboards import next_change_default_keyboard
 from keyboards.default.confirm_actions_for_group import delete_group_default_keyboard
 from keyboards.default.go_to_registration import go_registration_default_keyboard
@@ -27,8 +27,13 @@ async def delete_group_final_function(message: types.Message, state: FSMContext)
         parent_profiles = await db.select_parent_profiles(group_id=group_id)
         for parent_profile in parent_profiles:
             user_id = parent_profile['user_id']
-            await db.update_user(user_id=user_id, role='user')
+            marks = await db.select_daily_marks(student_id=parent_profile['id'])
+            for mark in marks:
+                await db.delete_daily_mark(mark_id=mark['id'])
             await db.delete_parent_profile(profile_id=parent_profile["id"])
+            profiles = await db.select_parent_profiles(user_id=user_id)
+            if not profiles:
+                await db.update_user(user_id=user_id, role='user')
 
         await db.delete_group(group_id=group_id)
         await message.answer(text="📣 Guruh muvaffaqiyatli o'chirildi ✅", reply_markup=back_to_menu)
@@ -61,7 +66,6 @@ async def delete_teacher(message: types.Message, state: FSMContext):
             await DeleteGroupState.group_id.set()
 
 
-# afasdfasfsdfasd
 @dp.message_handler(text="🔙 Orqaga", state=DeleteGroupState.group_id)
 async def back_to_actions(message: types.Message, state: FSMContext):
     await state.finish()
@@ -74,8 +78,6 @@ async def back_to_groups_list(message: types.Message, state: FSMContext):
     await message.answer(text="O'chirmoqchi bo'lgan guruhni tanlang 👇", reply_markup=markup)
     await DeleteGroupState.group_id.set()
 
-
-# aasdfadfasd
 
 @dp.message_handler(state=DeleteGroupState.group_id)
 async def delete_teacher(message: types.Message, state: FSMContext):
@@ -338,11 +340,18 @@ async def remove_student(call: types.CallbackQuery, state: FSMContext):
     parent_profile = await db.select_parent_profile(profile_id=student_id)
     user_id = parent_profile['user_id']
 
+    marks = await db.select_daily_marks(student_id=student_id)
+    for mark in marks:
+        await db.delete_daily_mark(mark_id=mark['id'])
+
     await db.delete_parent_profile(profile_id=student_id)
-    await db.update_user(
-        user_id=user_id,
-        role='user'
-    )
+
+    profiles = await db.select_parent_profiles(user_id=user_id)
+    if not profiles:
+        await db.update_user(
+            user_id=user_id,
+            role='user'
+        )
     await call.message.answer(text="✅ O'quvchi guruhdan olib tashlandi", reply_markup=back_to_menu)
     await bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
     await state.finish()
@@ -407,7 +416,7 @@ async def get_group_id(message: types.Message, state: FSMContext):
         return
     group_id = groups[0]['id']
     await state.update_data(group_id=group_id)
-    markup = await all_users_default_keyboard()
+    markup = await all_users_and_parents_default_keyboard()
     await message.answer(text="O'quvchi qo'shish uchun foydalanuvchilardan birini tanlang 👇",
                          reply_markup=markup)
     await AddStudentToGroupState.user_id.set()

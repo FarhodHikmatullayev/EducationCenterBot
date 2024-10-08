@@ -69,7 +69,7 @@ class Group(models.Model):
 
 
 class ParentProfile(models.Model):
-    user = models.OneToOneField(Users, on_delete=models.CASCADE, verbose_name='Foydalanuvchi', null=True, blank=True)
+    user = models.ForeignKey(Users, on_delete=models.CASCADE, verbose_name='Foydalanuvchi', null=True, blank=True)
     child_first_name = models.CharField(max_length=100, null=True, blank=True, verbose_name='Farzand ismi')
     child_last_name = models.CharField(max_length=100, null=True, blank=True, verbose_name='Farzand familiyasi')
     group = models.ForeignKey(Group, on_delete=models.SET_NULL, verbose_name="Guruhi", null=True, blank=True)

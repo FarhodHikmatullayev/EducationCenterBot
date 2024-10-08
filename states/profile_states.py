@@ -24,3 +24,14 @@ class UpdateParentProfileState(StatesGroup):
     child_first_name = State()
     child_last_name = State()
     phone_number = State()
+
+
+class GetProfileState(StatesGroup):
+    profile_id = State()
+
+
+class GetProfileStateForRating(StatesGroup):
+    profile_id = State()
+
+class GetProfileStateForProfile(StatesGroup):
+    profile_id = State()

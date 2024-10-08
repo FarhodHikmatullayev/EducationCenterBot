@@ -188,8 +188,11 @@ async def save_mark_function(call: types.CallbackQuery, state: FSMContext):
         darsni_ozlashtirish=darsni_ozlashtirish,
         description=description
     )
+    parent_profile = await db.select_parent_profile(profile_id=student_id)
+    child_full_name = f"{parent_profile['child_first_name']} {parent_profile['child_last_name']}"
 
     text = (f"Farzandingizning bugungi baholari: 🌟\n"
+            f"Farzandingiz: {child_full_name}\n"
             f"😊 Darsda kayfiyati: {kayfiyat}\n"
             f"📚 Tartibi: {tartib}\n"
             f"💪 Darsdagi faolligi: {faollik}\n"
