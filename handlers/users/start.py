@@ -9,7 +9,7 @@ from states.user_states import UserCreateStates
 
 @dp.message_handler(CommandStart(), state='*')
 async def bot_start(message: types.Message, state: FSMContext):
-    await message.answer(text=f"{message.chat.id}")
+    # await message.answer(text=f"{message.chat.id}")
     try:
         await state.finish()
     except:
