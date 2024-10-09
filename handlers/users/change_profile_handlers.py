@@ -66,6 +66,7 @@ async def change_profile_function(message: types.Message, state: FSMContext):
         elif user_role == 'parent':
             data = await state.get_data()
             print('data', data)
+            print('data', data)
             profile_id = data.get('profile_id')
             user_id = user['id']
             phone_number = user['phone']

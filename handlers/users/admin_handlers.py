@@ -121,6 +121,7 @@ async def go_to_my_profile(message: types.Message, state: FSMContext):
             if len(parents) == 1:
                 parent = parents[0]
                 parent_id = parent['id']
+                await state.update_data(profile_id=parent_id)
                 child_first_name = parent['child_first_name']
                 child_last_name = parent['child_last_name']
                 group_id = parent['group_id']

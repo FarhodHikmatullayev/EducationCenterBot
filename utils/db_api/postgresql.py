@@ -171,7 +171,6 @@ class Database:
         sql = "DELETE FROM parent_profile WHERE id = $1 RETURNING *"
         return await self.execute(sql, profile_id, fetchrow=True)
 
-
     # for marks
 
     async def create_daily_mark(self, student_id, kayfiyat, tartib, faollik, vaqtida_kelish,
@@ -233,3 +232,17 @@ class Database:
           AND created_at::date = $2
         """
         return await self.execute(sql, student_id, today, fetch=True)
+
+    async def select_older_than_one_month_marks(self):
+        # Hozirgi sanani olish
+        today = datetime.now()
+
+        # 30 kun oldingi sanani hisoblash
+        thirty_days_ago = today - timedelta(days=60)
+
+        # 30 kundan oldin yaratilgan barcha baholarni olish
+        sql = """
+        SELECT * FROM daily_mark 
+        WHERE created_at < $1
+        """
+        return await self.execute(sql, thirty_days_ago, fetch=True)

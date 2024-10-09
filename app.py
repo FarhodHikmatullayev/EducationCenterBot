@@ -3,6 +3,7 @@ from aiogram import executor
 
 from loader import dp, db, bot
 import middlewares, filters, handlers
+from utils.delete_marks_task import delete_marks_older_than_one_month
 from utils.delete_users_task import delete_users_that_join_one_weak_ago
 from utils.set_bot_commands import set_default_commands
 from keep_alive import keep_alive
@@ -17,6 +18,7 @@ async def on_startup(dispatcher):
     await set_default_commands(dispatcher)
 
     asyncio.create_task(delete_users_that_join_one_weak_ago())
+    asyncio.create_task(delete_marks_older_than_one_month())
 
 
 if __name__ == '__main__':
