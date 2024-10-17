@@ -129,6 +129,7 @@ async def get_result_rate_for_admin(message: types.Message, state: FSMContext):
             sum_of_marks_dict[student_full_name] += mark['dars_qoldirmaslik']
             sum_of_marks_dict[student_full_name] += mark['vazifa_bajarilganligi']
             sum_of_marks_dict[student_full_name] += mark['darsni_ozlashtirish']
+    print(sum_of_marks_dict)
     sorted_data = sorted(sum_of_marks_dict.items(), key=lambda x: x[1], reverse=True)
 
     # Natijani shakllantirish
@@ -191,6 +192,7 @@ async def get_rating_for_parents(message: types.Message, state: FSMContext):
                         sum_of_marks_dict[student_full_name] += mark['dars_qoldirmaslik']
                         sum_of_marks_dict[student_full_name] += mark['vazifa_bajarilganligi']
                         sum_of_marks_dict[student_full_name] += mark['darsni_ozlashtirish']
+                print(sum_of_marks_dict)
                 sorted_data = sorted(sum_of_marks_dict.items(), key=lambda x: x[1], reverse=True)
 
                 # Natijani shakllantirish
@@ -250,6 +252,7 @@ async def get_profile_id(message: types.Message, state: FSMContext):
             sum_of_marks_dict[student_full_name] += mark['dars_qoldirmaslik']
             sum_of_marks_dict[student_full_name] += mark['vazifa_bajarilganligi']
             sum_of_marks_dict[student_full_name] += mark['darsni_ozlashtirish']
+    print(sum_of_marks_dict)
     sorted_data = sorted(sum_of_marks_dict.items(), key=lambda x: x[1], reverse=True)
 
     # Natijani shakllantirish
