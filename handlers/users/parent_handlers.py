@@ -40,7 +40,6 @@ async def contact_with_teacher(message: types.Message, state: FSMContext):
                 parent_profile = parent_profiles[0]
                 await GetProfileState.profile_id.set()
                 await state.update_data(profile_id=parent_profile['id'])
-                print('profile_id', parent_profile['id'])
                 group_id = parent_profile['group_id']
                 group = await db.select_group(group_id=group_id)
                 teacher_id = group['teacher_id']
@@ -88,7 +87,6 @@ async def start_sending_idea(message: types.Message, state: FSMContext):
                                  reply_markup=go_back_default_keyboard)
             data = await state.get_data()
             profile_id = data.get('profile_id')
-            print('profile_id', profile_id)
             await state.finish()
             await IdeaStates.text.set()
             await state.update_data(profile_id=profile_id)
@@ -183,7 +181,6 @@ async def get_child_function(message: types.Message, state: FSMContext):
 @dp.callback_query_handler(state=IdeaStates.text, text="yes")
 async def send_idea_finish(call: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()
-    print('data', data)
     idea = data.get("text")
     profile_id = data.get('profile_id')
 

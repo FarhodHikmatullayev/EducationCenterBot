@@ -66,7 +66,6 @@ async def get_actions_for_groups(message: types.Message, state: FSMContext):
 
 @dp.message_handler(text="👤 Mening Profilim", state="*")
 async def go_to_my_profile(message: types.Message, state: FSMContext):
-    print(1)
     try:
         await state.finish()
     except:
