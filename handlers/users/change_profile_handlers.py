@@ -1,5 +1,6 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
+from django.contrib.sites.checks import check_site_id
 
 from keyboards.default.change_profile_keyboards import next_change_default_keyboard
 from keyboards.default.go_to_registration import go_registration_default_keyboard
@@ -153,6 +154,8 @@ async def get_admin_phone_number_function(message: types.Message, state: FSMCont
     first_name = data.get("first_name")
     last_name = data.get("last_name")
     phone_number = data.get("phone_number")
+    if not phone_number:
+        phone_number = "Hali kiritilmagan"
 
     text = (f"🔄 Profilingiz o'zgarishlardan so'ng quyidagicha bo'ladi 👇\n"
             f"🧑‍💼 Ismingiz: {first_name}\n"
@@ -281,12 +284,18 @@ async def get_teacher_experience_function(message: types.Message, state: FSMCont
     phone_number = data.get("phone_number")
     experience = data.get("experience")
     birth_year = data.get("birth_year")
+    if not birth_year:
+        birth_year = "Hali kiritilmagan"
+    if not experience:
+        experience1 = "Hali kiritilmagan"
+    else:
+        experience1 = f"{experience} yil"
 
     text = (f"🔄 Profilingiz o'zgarishlardan so'ng quyidagicha bo'ladi 👇\n"
             f"🧑‍💼 Ismingiz: {first_name}\n"
             f"👤 Familiyangiz: {last_name}\n"
             f"📞 Telefon raqamingiz: {phone_number}\n"
-            f"💼 Ish stajingiz: {experience} yil\n"
+            f"💼 Ish stajingiz: {experience1}\n"
             f"📅 Tug'ilgan yilingiz: {birth_year}")
     await message.answer(text=text)
     await message.answer(text="Saqlashni xohlaysizmi?", reply_markup=confirm_keyboard)
@@ -356,6 +365,12 @@ async def get_parent_phone_number_function(message: types.Message, state: FSMCon
     child_first_name = data.get("child_first_name")
     child_last_name = data.get("child_last_name")
     phone_number = data.get("phone_number")
+    if not child_last_name:
+        child_last_name = "Hali kiritilmagan"
+    if not child_first_name:
+        child_first_name = "Hali kiritilmagan"
+    if not phone_number:
+        phone_number = "Hali kiritilmagan"
 
     text = (f"🔄 Profilingiz o'zgarishlardan so'ng quyidagicha bo'ladi 👇\n"
             f"🧑‍💼 Farzandingizning ismi: {child_first_name}\n"

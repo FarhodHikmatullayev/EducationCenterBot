@@ -81,6 +81,8 @@ async def go_to_my_profile(message: types.Message, state: FSMContext):
         user_role = user['role']
         full_name = user['full_name']
         phone_number = user['phone']
+        if not phone_number:
+            phone_number = "Hali kiritilmagan"
         first_name = full_name.split()[0]
         last_name = full_name.split()[1]
         user_id = user['id']
@@ -96,16 +98,23 @@ async def go_to_my_profile(message: types.Message, state: FSMContext):
             teacher = teachers[0]
             teacher_id = teacher['id']
             experience = teacher['experience']
+            if not experience:
+                experience1 = "Hali kiritilmagan"
+            else:
+                experience1 = f"{experience} yil"
             birth_year = teacher['birth_year']
             this_year = datetime.now().year
-            age = this_year - birth_year
+            if birth_year:
+                age = this_year - birth_year
+            else:
+                age = "Hali kiritilmagan"
             groups = await db.select_groups(teacher_id=teacher_id)
             text = (f"📋 Sizning ma'lumotlaringiz 👇\n"
                     f"🧑‍💼 Ismingiz: {first_name}\n"
                     f"👤 Familiyangiz: {last_name}\n"
                     f"📞 Telefon raqamingiz: {phone_number}\n"
                     f"🎂 Yoshingiz: {age} \n"
-                    f"💼 Ish stajingiz: {experience} yil\n")
+                    f"💼 Ish stajingiz: {experience1}\n")
             if groups:
                 tr = 0
                 text += f"📚 Guruhlaringiz:\n"
@@ -123,6 +132,10 @@ async def go_to_my_profile(message: types.Message, state: FSMContext):
                 await state.update_data(profile_id=parent_id)
                 child_first_name = parent['child_first_name']
                 child_last_name = parent['child_last_name']
+                if not child_first_name:
+                    child_first_name = "Hali kiritilmagan"
+                if not child_last_name:
+                    child_last_name = "Hali kiritilmagan"
                 group_id = parent['group_id']
                 groups = await db.select_groups(id=group_id)
                 if groups:
@@ -175,8 +188,14 @@ async def get_profile_id(message: types.Message, state: FSMContext):
 
     parent_id = parent['id']
     child_first_name = parent['child_first_name']
+    if not child_first_name:
+        child_first_name = "Hali kiritilmagan"
     child_last_name = parent['child_last_name']
+    if not child_last_name:
+        child_last_name = "Hali kiritilmagan"
     phone_number = user['phone']
+    if not phone_number:
+        phone_number = "Hali kiritilmagan"
     group_id = parent['group_id']
     groups = await db.select_groups(id=group_id)
     if groups:
