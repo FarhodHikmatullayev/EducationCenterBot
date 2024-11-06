@@ -175,8 +175,8 @@ class Database:
 
     async def create_daily_mark(self, student_id, kayfiyat, tartib, faollik, vaqtida_kelish,
                                 dars_qoldirmaslik, vazifa_bajarilganligi, darsni_ozlashtirish,
-                                created_at=datetime.now(),
                                 description=None):
+        created_at = datetime.now()  # created_at ni funktsiya ichida belgilaymiz
         sql = """
         INSERT INTO daily_mark (student_id, kayfiyat, tartib, faollik, vaqtida_kelish, 
                                 dars_qoldirmaslik, vazifa_bajarilganligi, darsni_ozlashtirish, created_at, description)
