@@ -1,4 +1,3 @@
-
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 
@@ -36,10 +35,12 @@ async def get_rates_of_the_group(message: types.Message, state: FSMContext):
                 return
             sum_of_marks_dict = dict()
             for parent_profile in parent_profiles:
+                count_of_marks = 0
                 student_full_name = f"{parent_profile['child_first_name']} {parent_profile['child_last_name']}"
                 sum_of_marks_dict[student_full_name] = 0
                 monthly_marks = await db.select_last_month_marks(student_id=parent_profile['id'])
                 for mark in monthly_marks:
+                    count_of_marks += 1
                     sum_of_marks_dict[student_full_name] += mark['kayfiyat']
                     sum_of_marks_dict[student_full_name] += mark['tartib']
                     sum_of_marks_dict[student_full_name] += mark['faollik']
@@ -47,6 +48,11 @@ async def get_rates_of_the_group(message: types.Message, state: FSMContext):
                     sum_of_marks_dict[student_full_name] += mark['dars_qoldirmaslik']
                     sum_of_marks_dict[student_full_name] += mark['vazifa_bajarilganligi']
                     sum_of_marks_dict[student_full_name] += mark['darsni_ozlashtirish']
+
+                arithmetic = sum_of_marks_dict[student_full_name] / count_of_marks / 7
+                arithmetic = round(arithmetic, 2)
+                sum_of_marks_dict[student_full_name] = arithmetic
+
             sorted_data = sorted(sum_of_marks_dict.items(), key=lambda x: x[1], reverse=True)
 
             # Natijani shakllantirish
