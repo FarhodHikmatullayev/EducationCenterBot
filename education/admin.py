@@ -42,6 +42,6 @@ class DailyMarkAdmin(admin.ModelAdmin):
         return obj.student.group.name if obj.student.group else None  # Safely get the group name
 
     get_student_group.short_description = 'Group'
-    search_fields = ('student__child_first_name', "student__child_last_name", 'student__group__name')
-    list_filter = ('created_at', 'get_student_group')
+    search_fields = ('student__child_first_name', "student__child_last_name", 'get_student_group')
+    list_filter = ('created_at',)
     date_hierarchy = 'created_at'
