@@ -35,7 +35,7 @@ class ParentProfileAdmin(admin.ModelAdmin):
 
 @admin.register(DailyMark)
 class DailyMarkAdmin(admin.ModelAdmin):
-    list_display = ('id', 'student', 'created_at')
-    search_fields = ('student__child_first_name', "student__child_last_name")
+    list_display = ('id', 'student', 'student__group', 'created_at')
+    search_fields = ('student__child_first_name', "student__child_last_name", 'student__group__name')
     list_filter = ('created_at',)
     date_hierarchy = 'created_at'
