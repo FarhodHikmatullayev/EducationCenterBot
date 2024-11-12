@@ -23,3 +23,5 @@ if DEVELOPMENT_MODE:
     DB_HOST = env.str("DB_HOST")
 else:
     DATABASE_URL = env.str("DATABASE_URL")
+
+GROUP_CHAT_ID = env.str('GROUP_CHAT_ID')

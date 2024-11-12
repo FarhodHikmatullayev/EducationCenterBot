@@ -1,4 +1,3 @@
-
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 
@@ -36,10 +35,12 @@ async def get_rates_of_the_group(message: types.Message, state: FSMContext):
                 return
             sum_of_marks_dict = dict()
             for parent_profile in parent_profiles:
+                count_of_marks = 0
                 student_full_name = f"{parent_profile['child_first_name']} {parent_profile['child_last_name']}"
                 sum_of_marks_dict[student_full_name] = 0
                 monthly_marks = await db.select_last_month_marks(student_id=parent_profile['id'])
                 for mark in monthly_marks:
+                    count_of_marks += 1
                     sum_of_marks_dict[student_full_name] += mark['kayfiyat']
                     sum_of_marks_dict[student_full_name] += mark['tartib']
                     sum_of_marks_dict[student_full_name] += mark['faollik']
@@ -47,6 +48,11 @@ async def get_rates_of_the_group(message: types.Message, state: FSMContext):
                     sum_of_marks_dict[student_full_name] += mark['dars_qoldirmaslik']
                     sum_of_marks_dict[student_full_name] += mark['vazifa_bajarilganligi']
                     sum_of_marks_dict[student_full_name] += mark['darsni_ozlashtirish']
+                if count_of_marks != 0:
+                    arithmetic = sum_of_marks_dict[student_full_name] / count_of_marks / 7
+                    arithmetic = round(arithmetic, 2)
+                    sum_of_marks_dict[student_full_name] = arithmetic
+
             sorted_data = sorted(sum_of_marks_dict.items(), key=lambda x: x[1], reverse=True)
 
             # Natijani shakllantirish
@@ -62,7 +68,7 @@ async def get_rates_of_the_group(message: types.Message, state: FSMContext):
                     result_str.append(f"{i + 1}. {name}: {score}")  # Boshqa o'rinlar
 
             # Result text
-            text = "📊 Oxirgi bir oylik natijalar:\n"
+            text = "📊 Oxirgi bir oylik o'rtacha natijalar:\n"
             text += "\n".join(result_str)
             await message.answer(text=text, reply_markup=go_back_default_keyboard)
 
@@ -121,7 +127,9 @@ async def get_result_rate_for_admin(message: types.Message, state: FSMContext):
         student_full_name = f"{parent_profile['child_first_name']} {parent_profile['child_last_name']}"
         sum_of_marks_dict[student_full_name] = 0
         monthly_marks = await db.select_last_month_marks(student_id=parent_profile['id'])
+        count_of_marks = 0
         for mark in monthly_marks:
+            count_of_marks += 1
             sum_of_marks_dict[student_full_name] += mark['kayfiyat']
             sum_of_marks_dict[student_full_name] += mark['tartib']
             sum_of_marks_dict[student_full_name] += mark['faollik']
@@ -129,7 +137,13 @@ async def get_result_rate_for_admin(message: types.Message, state: FSMContext):
             sum_of_marks_dict[student_full_name] += mark['dars_qoldirmaslik']
             sum_of_marks_dict[student_full_name] += mark['vazifa_bajarilganligi']
             sum_of_marks_dict[student_full_name] += mark['darsni_ozlashtirish']
-    print(sum_of_marks_dict)
+
+        if count_of_marks != 0:
+            arithmetic = sum_of_marks_dict[student_full_name] / count_of_marks / 7
+            arithmetic = round(arithmetic, 2)
+            sum_of_marks_dict[student_full_name] = arithmetic
+
+
     sorted_data = sorted(sum_of_marks_dict.items(), key=lambda x: x[1], reverse=True)
 
     # Natijani shakllantirish
@@ -184,7 +198,9 @@ async def get_rating_for_parents(message: types.Message, state: FSMContext):
                     student_full_name = f"{parent_profile['child_first_name']} {parent_profile['child_last_name']}"
                     sum_of_marks_dict[student_full_name] = 0
                     monthly_marks = await db.select_last_month_marks(student_id=parent_profile['id'])
+                    count_of_marks = 0
                     for mark in monthly_marks:
+                        count_of_marks += 1
                         sum_of_marks_dict[student_full_name] += mark['kayfiyat']
                         sum_of_marks_dict[student_full_name] += mark['tartib']
                         sum_of_marks_dict[student_full_name] += mark['faollik']
@@ -192,7 +208,12 @@ async def get_rating_for_parents(message: types.Message, state: FSMContext):
                         sum_of_marks_dict[student_full_name] += mark['dars_qoldirmaslik']
                         sum_of_marks_dict[student_full_name] += mark['vazifa_bajarilganligi']
                         sum_of_marks_dict[student_full_name] += mark['darsni_ozlashtirish']
-                print(sum_of_marks_dict)
+                    if count_of_marks != 0:
+                        arithmetic = sum_of_marks_dict[student_full_name] / count_of_marks / 7
+                        arithmetic = round(arithmetic, 2)
+                        sum_of_marks_dict[student_full_name] = arithmetic
+
+
                 sorted_data = sorted(sum_of_marks_dict.items(), key=lambda x: x[1], reverse=True)
 
                 # Natijani shakllantirish
@@ -244,7 +265,9 @@ async def get_profile_id(message: types.Message, state: FSMContext):
         student_full_name = f"{parent_profile['child_first_name']} {parent_profile['child_last_name']}"
         sum_of_marks_dict[student_full_name] = 0
         monthly_marks = await db.select_last_month_marks(student_id=parent_profile['id'])
+        count_of_marks = 0
         for mark in monthly_marks:
+            count_of_marks += 1
             sum_of_marks_dict[student_full_name] += mark['kayfiyat']
             sum_of_marks_dict[student_full_name] += mark['tartib']
             sum_of_marks_dict[student_full_name] += mark['faollik']
@@ -252,7 +275,10 @@ async def get_profile_id(message: types.Message, state: FSMContext):
             sum_of_marks_dict[student_full_name] += mark['dars_qoldirmaslik']
             sum_of_marks_dict[student_full_name] += mark['vazifa_bajarilganligi']
             sum_of_marks_dict[student_full_name] += mark['darsni_ozlashtirish']
-    print(sum_of_marks_dict)
+        if count_of_marks != 0:
+            arithmetic = sum_of_marks_dict[student_full_name] / count_of_marks / 7
+            arithmetic = round(arithmetic, 2)
+            sum_of_marks_dict[student_full_name] = arithmetic
     sorted_data = sorted(sum_of_marks_dict.items(), key=lambda x: x[1], reverse=True)
 
     # Natijani shakllantirish
