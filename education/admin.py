@@ -33,6 +33,7 @@ class ParentProfileAdmin(admin.ModelAdmin):
     list_filter = ('group__name',)
 
 
+
 @admin.register(DailyMark)
 class DailyMarkAdmin(admin.ModelAdmin):
     list_display = ('id', 'student', 'student__group', 'created_at')
