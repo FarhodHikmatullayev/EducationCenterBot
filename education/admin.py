@@ -43,5 +43,5 @@ class DailyMarkAdmin(admin.ModelAdmin):
 
     get_student_group.short_description = 'Group'
     search_fields = ('student__child_first_name', "student__child_last_name", 'student__group__name')
-    list_filter = ('created_at',)
+    list_filter = ('created_at', 'get_student_group')
     date_hierarchy = 'created_at'
