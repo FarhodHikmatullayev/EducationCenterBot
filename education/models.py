@@ -146,7 +146,7 @@ class DailyMark(models.Model):
 
     # other categories
     description = models.TextField(null=True, blank=True, verbose_name='Izoh')
-    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True, verbose_name="Time")
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True, verbose_name="Vaqt")
 
     class Meta:
         db_table = 'daily_mark'

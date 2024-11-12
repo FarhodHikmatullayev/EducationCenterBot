@@ -36,7 +36,12 @@ class ParentProfileAdmin(admin.ModelAdmin):
 
 @admin.register(DailyMark)
 class DailyMarkAdmin(admin.ModelAdmin):
-    list_display = ('id', 'student', 'student__group', 'created_at')
+    list_display = ('id', 'student', 'get_student_group', 'created_at')
+
+    def get_student_group(self, obj):
+        return obj.student.group.name if obj.student.group else None  # Safely get the group name
+
+    get_student_group.short_description = 'Group'
     search_fields = ('student__child_first_name', "student__child_last_name", 'student__group__name')
     list_filter = ('created_at',)
     date_hierarchy = 'created_at'
