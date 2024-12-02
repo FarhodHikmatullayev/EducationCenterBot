@@ -17,7 +17,7 @@ async def on_startup(dispatcher):
     await db.create()
     await set_default_commands(dispatcher)
 
-    asyncio.create_task(delete_users_that_join_one_weak_ago())
+    # asyncio.create_task(delete_users_that_join_one_weak_ago())
     asyncio.create_task(delete_marks_older_than_one_month())
 
 
