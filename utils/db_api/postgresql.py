@@ -55,7 +55,8 @@ class Database:
         ])
         return sql, tuple(parameters.values())
 
-    async def create_user(self, phone, username, full_name, telegram_id, role='user', joined_at=datetime.now()):
+    async def create_user(self, phone, username, full_name, telegram_id, role='user'):
+        joined_at = datetime.now()
         sql = "INSERT INTO users (phone, username, full_name, telegram_id, role, joined_at) VALUES($1, $2, $3, $4, $5, $6) RETURNING *"
         return await self.execute(sql, phone, username, full_name, telegram_id, role, joined_at, fetchrow=True)
 
